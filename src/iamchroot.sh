@@ -62,7 +62,7 @@ sed -i '/%wheel ALL=(ALL) ALL/s/^#//g' /etc/sudoers
 if [[ $my_init == "openrc" ]]; then
     rc-update add connmand default
 else
-    mkdir /run/runit/service/connmand
+    mkdir -p /run/runit/service/connmand
 
     echo "#!/bin/sh
     exec 2>&1 # Redirect stderr to stdout
@@ -88,7 +88,7 @@ if [[ $encrypted != "n" && $my_fs == "btrfs" ]]; then
     if [[ $my_init == "openrc" ]]; then
         rc-update add dmcrypt boot
     else
-        mkdir /run/runit/service/dmcrypt
+        mkdir -p /run/runit/service/dmcrypt
 
         echo "#!/bin/sh
         exec 2>&1 # Redirect stderr to stdout
