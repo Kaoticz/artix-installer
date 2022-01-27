@@ -20,14 +20,22 @@
 # along with artix-installer. If not, see <https://www.gnu.org/licenses/>.
 
 # Partition disk
+if [[$my_init == "openrc"]]; then
+    disk_init="lvm2-openrc"
+    crypto="cryptsetup-openrc"
+else
+    disk_init=""
+    crypto="cryptsetup-void-runit"
+fi
+
 yes | pacman -Sy --needed parted
 
 if [[ $encrypted != "n" ]]; then
-    [[ $my_fs == "btrfs" ]] && fs_pkgs="cryptsetup cryptsetup-openrc btrfs-progs"
-    [[ $my_fs == "ext4" ]] && fs_pkgs="cryptsetup lvm2 lvm2-openrc"
+    [[ $my_fs == "btrfs" ]] && fs_pkgs="cryptsetup $crypto btrfs-progs"
+    [[ $my_fs == "ext4" ]] && fs_pkgs="cryptsetup lvm2 $disk_init"
 else
     [[ $my_fs == "btrfs" ]] && fs_pkgs="btrfs-progs"
-    [[ $my_fs == "ext4" ]] && fs_pkgs="lvm2 lvm2-openrc"
+    [[ $my_fs == "ext4" ]] && fs_pkgs="lvm2 $disk_init"
 fi
 
 parted -s $my_disk mklabel gpt \
@@ -94,6 +102,6 @@ mount $part1 /mnt/boot
 [[ $(grep 'vendor' /proc/cpuinfo) == *"Amd"* ]] && ucode="amd-ucode"
 
 # Install base system and kernel
-basestrap /mnt base base-devel openrc elogind-openrc $fs_pkgs efibootmgr grub $ucode dhcpcd wpa_supplicant connman-openrc
-basestrap /mnt linux linux-firmware linux-headers mkinitcpio
+basestrap /mnt base base-devel $my_init $fs_pkgs efibootmgr grub $ucode dhcpcd wpa_supplicant
+basestrap /mnt linux-zen linux-firmware linux-headers mkinitcpio
 fstabgen -U /mnt > /mnt/etc/fstab

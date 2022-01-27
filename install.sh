@@ -41,9 +41,6 @@ confirm_name () {
     echo $name2
 }
 
-# Load keymap
-sudo loadkeys us
-
 # Check boot mode
 [[ ! -d /sys/firmware/efi ]] && printf "Not booted in UEFI mode. Aborting..." && exit 1
 
@@ -74,6 +71,12 @@ done
 until [[ $my_fs == "btrfs" || $my_fs == "ext4" ]]; do
     printf "Filesystem (btrfs/ext4): " && read my_fs
     [[ ! $my_fs ]] && my_fs="btrfs"
+done
+
+# Choose init system
+until [[ $my_init == "openrc" || $my_init == "runit" ]]; do
+    printf "Init system (openrc/runit): " && read my_init
+    [[ ! $my_init ]] && my_init="openrc"
 done
 
 root_part=$part3
