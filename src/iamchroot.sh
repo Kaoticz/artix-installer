@@ -64,9 +64,9 @@ if [[ $my_init == "openrc" ]]; then
 else
     mkdir -p /run/runit/service/connmand
 
-    echo "#!/bin/sh
+    echo '#!/bin/sh
     exec 2>&1 # Redirect stderr to stdout
-    exec connmand" | tee /run/runit/service/connmand/run
+    exec connmand' | tee -a /run/runit/service/connmand/run
 
     chmod +x /run/runit/service/connmand/run
 fi
@@ -90,9 +90,9 @@ if [[ $encrypted != "n" && $my_fs == "btrfs" ]]; then
     else
         mkdir -p /run/runit/service/dmcrypt
 
-        echo "#!/bin/sh
+        echo '#!/bin/sh
         exec 2>&1 # Redirect stderr to stdout
-        exec dmcrypt" | tee /run/runit/service/dmcrypt/run
+        exec dmcrypt' | tee -a /run/runit/service/dmcrypt/run
 
         chmod +x /run/runit/service/dmcrypt/run
     fi
